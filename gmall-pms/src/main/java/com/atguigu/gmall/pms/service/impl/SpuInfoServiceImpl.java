@@ -11,6 +11,7 @@ import com.atguigu.gmall.sms.vo.SaleVo;
 
 import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,11 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
     @Autowired
     private SpuInfoDescService saveSpuDesc;
+
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+
+
 
 
     @Override
@@ -100,8 +106,14 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoDao, SpuInfoEntity> i
 
         //2.sku相关信息
         this.saveSkuInfoWithSaleInfo(spuInfoVo);
+        Long stuId = spuInfoVo.getId();
+        sendMsg(stuId,"insert");
 
+    }
 
+    public void sendMsg( Long stuId,String type) {
+        //指定你要发送的交换机         消息的内容
+        amqpTemplate.convertAndSend("GMALL-PMS-EXCHANGE","item."+type,stuId);
     }
 
     public void saveSkuInfoWithSaleInfo(SpuInfoVo spuInfoVo) {

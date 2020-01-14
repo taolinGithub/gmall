@@ -1,6 +1,7 @@
 package com.atguigu.gmall.pms.controller;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 import com.atguigu.core.bean.PageVo;
@@ -30,6 +31,12 @@ public class SkuSaleAttrValueController {
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
 
+
+    @GetMapping("{spuId}")
+    public Resp<List<SkuSaleAttrValueEntity>> queryAttrSaleBySkuIds(@PathVariable("spuId") Long spuId){
+        List<SkuSaleAttrValueEntity> skuSaleAttrValueEntities= skuSaleAttrValueService.queryAttrSaleBySkuIds(spuId);
+        return Resp.ok(skuSaleAttrValueEntities);
+    }
     /**
      * 列表
      */

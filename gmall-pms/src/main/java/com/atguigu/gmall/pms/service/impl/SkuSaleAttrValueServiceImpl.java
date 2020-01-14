@@ -1,5 +1,9 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.atguigu.gmall.pms.dao.SkuInfoDao;
+import com.atguigu.gmall.pms.entity.SkuInfoEntity;
+import com.atguigu.gmall.pms.entity.SpuInfoEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -13,10 +17,16 @@ import com.atguigu.gmall.pms.dao.SkuSaleAttrValueDao;
 import com.atguigu.gmall.pms.entity.SkuSaleAttrValueEntity;
 import com.atguigu.gmall.pms.service.SkuSaleAttrValueService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service("skuSaleAttrValueService")
 public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao, SkuSaleAttrValueEntity> implements SkuSaleAttrValueService {
 
+
+    @Autowired
+    private SkuInfoDao skuInfoDao;
     @Override
     public PageVo queryPage(QueryCondition params) {
         IPage<SkuSaleAttrValueEntity> page = this.page(
@@ -25,6 +35,18 @@ public class SkuSaleAttrValueServiceImpl extends ServiceImpl<SkuSaleAttrValueDao
         );
 
         return new PageVo(page);
+    }
+
+    @Override
+    public List<SkuSaleAttrValueEntity> queryAttrSaleBySkuIds(Long spuId) {
+
+        List<SkuInfoEntity> skuInfoEntities = skuInfoDao.selectList(new QueryWrapper<SkuInfoEntity>().eq("spu_id", spuId));
+
+        List<Long> skus = skuInfoEntities.stream().map(SkuInfoEntity::getSkuId).collect(Collectors.toList());
+
+        List<SkuSaleAttrValueEntity> sku_id = this.list(new QueryWrapper<SkuSaleAttrValueEntity>().in("sku_id", skus));
+
+        return sku_id;
     }
 
 }

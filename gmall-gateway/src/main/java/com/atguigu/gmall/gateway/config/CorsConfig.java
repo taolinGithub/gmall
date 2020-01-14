@@ -15,6 +15,7 @@ public class CorsConfig {
     public CorsWebFilter  corsWebFilter(){
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:1000");//允许跨域请求的路径
+        config.addAllowedOrigin("http://localhost:2000");
         config.addAllowedHeader("*");//允许携带的头信息
         config.setAllowCredentials(true);//是否允许携带cookie
         config.addAllowedMethod("*");//允许那些方法跨域访问
